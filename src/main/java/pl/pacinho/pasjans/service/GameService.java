@@ -28,7 +28,7 @@ public class GameService {
         return gameRepository.newGame(playerName);
     }
 
-    public GameDto findDtoById(String gameId, String name) {
+    public GameDto findDtoById(String gameId) {
         return GameDtoMapper.parse(gameLogicService.findById(gameId));
     }
 

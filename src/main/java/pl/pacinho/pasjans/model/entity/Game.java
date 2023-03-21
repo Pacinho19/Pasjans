@@ -3,6 +3,7 @@ package pl.pacinho.pasjans.model.entity;
 import lombok.Getter;
 import lombok.Setter;
 import pl.pacinho.pasjans.model.dto.CardDto;
+import pl.pacinho.pasjans.model.dto.StackDto;
 import pl.pacinho.pasjans.model.enums.GameStatus;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ public class Game {
     private String id;
     @Setter
     private GameStatus status;
-    private Stack<CardDto> stack;
+    private StackDto stack;
     private Player player;
     private LocalDateTime startTime;
 
@@ -24,7 +25,6 @@ public class Game {
         this.id = UUID.randomUUID().toString();
         this.status = GameStatus.IN_PROGRESS;
         this.startTime = LocalDateTime.now();
-        this.stack = new Stack<>();
     }
 
 }
