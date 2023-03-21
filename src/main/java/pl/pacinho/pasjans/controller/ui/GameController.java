@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import pl.pacinho.pasjans.config.UIConfig;
 import pl.pacinho.pasjans.service.GameService;
@@ -35,6 +36,14 @@ public class GameController {
             model.addAttribute("error", e.getMessage());
             return gameHome(model);
         }
+    }
+
+    @GetMapping(UIConfig.GAME_PAGE)
+    public String gamePage(@PathVariable(value = "gameId") String gameId,
+                           Model model,
+                           Authentication authentication) {
+        model.addAttribute("game", gameService.findDtoById(gameId, authentication.getName()));
+        return "game";
     }
 
 }
