@@ -5,6 +5,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import pl.pacinho.pasjans.model.dto.GameDto;
 import pl.pacinho.pasjans.model.dto.mapper.GameDtoMapper;
+import pl.pacinho.pasjans.model.entity.Game;
 import pl.pacinho.pasjans.repository.GameRepository;
 
 import java.util.List;
@@ -25,11 +26,21 @@ public class GameService {
         List<GameDto> activeGames = getAvailableGames(playerName);
         if (activeGames.size() >= 10)
             throw new IllegalStateException("Cannot create new Game! Active game count : " + activeGames.size());
-        return gameRepository.newGame(playerName);
+
+        Game game = gameRepository.newGame(playerName);
+        gameLogicService.drawCards(game);
+        return game.getId();
     }
 
     public GameDto findDtoById(String gameId) {
         return GameDtoMapper.parse(gameLogicService.findById(gameId));
+    }
+
+    public void nextStackCard(String gameId) {
+        Game game = gameLogicService.findById(gameId);
+        game.getStack().nextIndex();
+
+        simpMessagingTemplate.convertAndSend("/reload-board/" + game.getId(), true);
     }
 
 }

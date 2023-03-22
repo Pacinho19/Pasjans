@@ -19,10 +19,10 @@ public class GameRepository {
         gameMap = new HashMap<>();
     }
 
-    public String newGame(String playerName) {
+    public Game newGame(String playerName) {
         Game game = new Game(playerName);
         gameMap.put(game.getId(), game);
-        return game.getId();
+        return game;
     }
 
     public List<GameDto> getAvailableGames(String name) {

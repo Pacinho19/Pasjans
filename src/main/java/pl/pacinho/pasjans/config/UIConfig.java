@@ -7,4 +7,6 @@ public class UIConfig {
     public static final String GAME_PAGE = GAME + "/{gameId}";
     public static final String GAME_BOARD = GAME_PAGE + "/board";
     public static final String GAME_BOARD_RELOAD = GAME_BOARD + "/reload";
+    public static final String GAME_STACK = GAME_PAGE + "/stack";
+    public static final String GAME_STACK_NEXT_CARD = GAME_STACK + "/next";
 }

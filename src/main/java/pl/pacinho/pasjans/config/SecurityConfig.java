@@ -37,9 +37,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .headers().disable()
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers(UIConfig.PREFIX).permitAll()
-                .antMatchers(UIConfig.GAME).permitAll()
+//                .antMatchers("/").permitAll()
+//                .antMatchers(UIConfig.PREFIX).permitAll()
+//                .antMatchers(UIConfig.GAME).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();

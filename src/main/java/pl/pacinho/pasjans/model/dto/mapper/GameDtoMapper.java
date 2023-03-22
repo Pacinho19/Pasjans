@@ -11,6 +11,9 @@ public class GameDtoMapper {
                 .startTime(game.getStartTime())
                 .player(game.getPlayer().getName())
                 .status(game.getStatus())
+                .stack(StackDtoMapper.parse(game.getStack()))
+                .cardsGroups(CardsGroupsMapper.parse(game.getCardsGroup()))
+                .cardsColumns(CardsColumnsMapper.parse(game.getCardsColumns()))
                 .build();
     }
 }

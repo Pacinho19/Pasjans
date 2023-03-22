@@ -6,6 +6,7 @@ import lombok.Getter;
 import pl.pacinho.pasjans.model.enums.GameStatus;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 
 @Getter
 @Builder
@@ -16,5 +17,8 @@ public class GameDto {
     private GameStatus status;
     private String player;
     private LocalDateTime startTime;
+    private StackDto stack;
+    private LinkedList<CardDto> cardsGroups;
+    private LinkedList<CardColumnDto> cardsColumns;
 
 }
