@@ -49,3 +49,18 @@ function stackAction() {
     xhr.send();
 
 }
+
+function clickCard(cardDto, cardAction){
+    if(!cardAction) return;
+
+    var xhr = new XMLHttpRequest();
+    var url = '/pasjans/game/' + document.getElementById("gameId").value + '/card/group/add';
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () { };
+    var data = JSON.stringify(cardDto);
+
+    console.log(data);
+    xhr.send(data);
+
+}

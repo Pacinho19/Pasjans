@@ -37,4 +37,7 @@ public class Game {
         this.cardsColumns.add(cards);
     }
 
+    public void addCardGroup(CardGroup cardGroup) {
+        this.cardsGroup.add(cardGroup);
+    }
 }

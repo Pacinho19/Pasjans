@@ -7,6 +7,7 @@ import pl.pacinho.pasjans.model.enums.GameStatus;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -18,7 +19,7 @@ public class GameDto {
     private String player;
     private LocalDateTime startTime;
     private StackDto stack;
-    private LinkedList<CardDto> cardsGroups;
+    private Map<Integer, CardDto> cardsGroups;
     private LinkedList<CardColumnDto> cardsColumns;
 
 }

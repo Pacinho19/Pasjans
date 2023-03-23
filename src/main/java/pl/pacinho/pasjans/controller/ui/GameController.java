@@ -5,11 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import pl.pacinho.pasjans.config.UIConfig;
+import pl.pacinho.pasjans.model.dto.CardDto;
 import pl.pacinho.pasjans.model.dto.GameDto;
 import pl.pacinho.pasjans.service.GameService;
 
@@ -67,10 +65,16 @@ public class GameController {
     }
 
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-
     @PostMapping(UIConfig.GAME_STACK_NEXT_CARD)
     public void nextStackCard(@PathVariable(value = "gameId") String gameId) {
         gameService.nextStackCard(gameId);
     }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PostMapping(UIConfig.GAME_ADD_CARD_TO_GROUP)
+    public void addCardToGroup(@PathVariable(value = "gameId") String gameId, @RequestBody CardDto cardDto) {
+        gameService.addCardToGroup(gameId,cardDto);
+    }
+
 
 }

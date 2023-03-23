@@ -1,12 +1,17 @@
-<span th:fragment="cardFrag(cardDto)"
-      th:style="${'cursor: pointer;border-radius:5%; border: 2px solid black;width:90%;height:90%;display: inline-block;background-color:'}"
+<span th:fragment="cardFrag(cardDto, cardAction)"
+      th:style="${'cursor: pointer;border-radius:5%; border: 2px solid black;width:100%;height:100%;display: inline-block;background-color:'}"
       th:styleappend="${cardDto!=null ? 'white' : '#1EB5DA'}"
       th:id="${cardDto!=null ? (cardDto.suit.name + '_' + cardDto.rank.name()) : 'stackCard'}"
       th:class="${cardDto!=null ? '' : 'stackCard'}">
 
     <div th:if="${cardDto!=null}">
-        <a href="#">
+        <th:block th:if="${cardAction}">
+            <a href="#" th:onclick="clickCard([[${cardDto}]], [[${cardAction}]])">
+                   <div th:replace="fragments/card-content :: cardContentFrag(cardDto=${cardDto})"/>
+            </a>
+        </th:block>
+        <th:block th:if="${!cardAction}">
             <div th:replace="fragments/card-content :: cardContentFrag(cardDto=${cardDto})"/>
-        </a>
+        </th:block>
     </div>
 </span>

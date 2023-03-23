@@ -2,22 +2,23 @@ package pl.pacinho.pasjans.model.entity;
 
 import lombok.Getter;
 import pl.pacinho.pasjans.model.dto.CardDto;
-import pl.pacinho.pasjans.model.enums.CardColor;
+import pl.pacinho.pasjans.model.enums.CardSuit;
 
 import java.util.LinkedList;
 
 @Getter
 public class CardGroup {
 
-    private CardColor color;
+    private CardSuit suit;
     private LinkedList<CardDto> cards;
 
-    public CardGroup(CardColor color) {
-        this.color = color;
+    public CardGroup(CardSuit suit) {
+        this.suit = suit;
         this.cards = new LinkedList<>();
     }
 
-    public void addCard(CardDto card) {
-        this.cards.add(card);
+    public CardDto getTopOfGroup() {
+        if(cards.isEmpty()) return null;
+        return cards.get(cards.size()-1);
     }
 }

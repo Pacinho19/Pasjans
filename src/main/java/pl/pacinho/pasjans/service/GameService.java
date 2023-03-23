@@ -3,6 +3,7 @@ package pl.pacinho.pasjans.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import pl.pacinho.pasjans.model.dto.CardDto;
 import pl.pacinho.pasjans.model.dto.GameDto;
 import pl.pacinho.pasjans.model.dto.mapper.GameDtoMapper;
 import pl.pacinho.pasjans.model.entity.Game;
@@ -43,4 +44,10 @@ public class GameService {
         simpMessagingTemplate.convertAndSend("/reload-board/" + game.getId(), true);
     }
 
+    public void addCardToGroup(String gameId, CardDto cardDto) {
+       boolean success = gameLogicService.addCardToGroup(gameId, cardDto);
+       if(success)
+        simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
+
+    }
 }
