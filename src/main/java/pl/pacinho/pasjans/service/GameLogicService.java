@@ -69,7 +69,7 @@ public class GameLogicService {
 
     private boolean checkPosition(CardDto cardDto, Game game) {
         CardDto cardFromStack = getCardFromStack(game, cardDto);
-        if (cardFromStack !=null) {
+        if (cardFromStack != null) {
             boolean addToGroup = addToGroup(game, cardDto);
             if (addToGroup)
                 removeFromStack(game, cardFromStack);
@@ -90,14 +90,14 @@ public class GameLogicService {
 
     private boolean tryAddToGroup(Game game, CardDto cardDto) {
         CardGroup cardGroup = findCardGroup(game, cardDto.getSuit());
-        if(cardGroup==null) return false;
+        if (cardGroup == null) return false;
 
         CardDto topOfGroup = cardGroup.getTopOfGroup();
-        if(topOfGroup==null) return false;
+        if (topOfGroup == null) return false;
 
-        if(topOfGroup.getRank().getValue()+1==cardDto.getRank().getValue()){
+        if (topOfGroup.getRank().getValue() + 1 == cardDto.getRank().getValue()) {
             cardGroup.getCards().add(cardDto);
-            return  true;
+            return true;
         }
         return false;
     }
@@ -122,13 +122,15 @@ public class GameLogicService {
     }
 
     private void removeFromStack(Game game, CardDto cardFromStack) {
-        if(cardFromStack==null) return;
+        if (cardFromStack == null) return;
 
         game.getStack()
                 .getCards()
                 .remove(cardFromStack);
 
-        game.getStack().prevIndex();
+        if (game.getStack().getCurrentIndex() != 0)
+            game.getStack().prevIndex();
+
     }
 
     private CardDto getCardFromStack(Game game, CardDto cardDto) {
