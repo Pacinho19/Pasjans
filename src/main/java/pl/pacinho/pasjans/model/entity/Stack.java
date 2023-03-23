@@ -26,4 +26,12 @@ public class Stack {
             return null;
         return cards.get(currentIndex);
     }
+
+    public int prevIndex() {
+        if (currentIndex > 0)
+            return --currentIndex;
+
+        currentIndex = cards.size()-1;
+        return currentIndex;
+    }
 }
