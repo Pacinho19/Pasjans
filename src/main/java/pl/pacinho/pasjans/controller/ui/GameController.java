@@ -10,6 +10,7 @@ import pl.pacinho.pasjans.config.UIConfig;
 import pl.pacinho.pasjans.model.dto.CardDto;
 import pl.pacinho.pasjans.model.dto.CardMoveDto;
 import pl.pacinho.pasjans.model.dto.GameDto;
+import pl.pacinho.pasjans.model.dto.GameSummaryDto;
 import pl.pacinho.pasjans.service.GameService;
 
 @RequiredArgsConstructor
@@ -45,6 +46,12 @@ public class GameController {
                            Model model,
                            Authentication authentication) {
         try {
+            GameSummaryDto gameSummaryDto = gameService.getGameSummary(gameId);
+            if (gameSummaryDto != null) {
+                model.addAttribute("gameSummary", gameSummaryDto);
+                return "game";
+            }
+
             GameDto game = gameService.findDtoById(gameId);
 
             if (!game.getPlayer().equals(authentication.getName()))
@@ -61,7 +68,13 @@ public class GameController {
     @GetMapping(UIConfig.GAME_BOARD_RELOAD)
     public String reloadBoard(Model model,
                               @PathVariable(value = "gameId") String gameId) {
-        model.addAttribute("game", gameService.findDtoById(gameId));
+        GameSummaryDto gameSummaryDto = gameService.getGameSummary(gameId);
+        if (gameSummaryDto != null) {
+            model.addAttribute("game", null);
+            model.addAttribute("gameSummary", gameSummaryDto);
+        } else {
+            model.addAttribute("game", gameService.findDtoById(gameId));
+        }
         return "fragments/board :: boardFrag";
     }
 
@@ -74,13 +87,13 @@ public class GameController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping(UIConfig.GAME_ADD_CARD_TO_GROUP)
     public void addCardToGroup(@PathVariable(value = "gameId") String gameId, @RequestBody CardDto cardDto) {
-        gameService.addCardToGroup(gameId,cardDto);
+        gameService.addCardToGroup(gameId, cardDto);
     }
 
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping(UIConfig.GAME_MOVE_CARDS)
     public void addCardToGroup(@PathVariable(value = "gameId") String gameId, @RequestBody CardMoveDto cardMoveDto) {
-        gameService.moveCards(gameId,cardMoveDto);
+        gameService.moveCards(gameId, cardMoveDto);
     }
 
 

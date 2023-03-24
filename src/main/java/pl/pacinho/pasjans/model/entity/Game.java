@@ -23,6 +23,7 @@ public class Game {
     private LinkedList<List<ColumnCardDto>> cardsColumns;
     private Player player;
     private LocalDateTime startTime;
+    private int moveCount;
 
     public Game(String player1) {
         this.player = new Player(player1, 1);
@@ -32,13 +33,18 @@ public class Game {
         this.cardsColumns = new LinkedList<>();
         this.cardsGroup = new LinkedList<>();
         this.stack = new Stack();
+        this.moveCount = 0;
     }
 
-    public void addCardColumn(List<ColumnCardDto> cards){
+    public void addCardColumn(List<ColumnCardDto> cards) {
         this.cardsColumns.add(cards);
     }
 
     public void addCardGroup(CardGroup cardGroup) {
         this.cardsGroup.add(cardGroup);
+    }
+
+    public void incrementMoveCount(){
+        moveCount++;
     }
 }

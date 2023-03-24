@@ -72,8 +72,10 @@ public class GameLogicService {
         CardDto cardFromStack = getCardFromStack(game, cardDto);
         if (cardFromStack != null) {
             boolean addToGroup = addToGroup(game, cardDto);
-            if (addToGroup)
+            if (addToGroup) {
+                game.incrementMoveCount();
                 removeFromStack(game, cardFromStack);
+            }
 
             return addToGroup;
         }
@@ -81,8 +83,10 @@ public class GameLogicService {
         CardDto cardFromColumn = getCardFromColumn(game, cardDto);
         if (cardFromColumn != null) {
             boolean addToGroup = addToGroup(game, cardDto);
-            if (addToGroup)
+            if (addToGroup) {
+                game.incrementMoveCount();
                 removeFromColumn(game, cardFromColumn);
+            }
 
             return addToGroup;
         }
@@ -244,6 +248,8 @@ public class GameLogicService {
         }
 
         List<CardDto> cardsToMove = getAllCardsAbove(game, cardMoveDto.getFirstCard());
+        if (!cardsToMove.isEmpty())
+            game.incrementMoveCount();
 
         List<ColumnCardDto> finalTargetColumn = targetColumn;
         cardsToMove.forEach(cardDto -> {
@@ -305,5 +311,14 @@ public class GameLogicService {
         return firstCard != null
                && secondCard != null
                && firstCard.getSuit().getColor() != secondCard.getSuit().getColor();
+    }
+
+    public boolean isGameOver(Game game) {
+        if (!game.getStack().getCards().isEmpty())
+            return false;
+
+        return game.getCardsColumns()
+                .stream()
+                .allMatch(List::isEmpty);
     }
 }

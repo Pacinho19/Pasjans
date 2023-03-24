@@ -6,10 +6,14 @@ import org.springframework.stereotype.Service;
 import pl.pacinho.pasjans.model.dto.CardDto;
 import pl.pacinho.pasjans.model.dto.CardMoveDto;
 import pl.pacinho.pasjans.model.dto.GameDto;
+import pl.pacinho.pasjans.model.dto.GameSummaryDto;
 import pl.pacinho.pasjans.model.dto.mapper.GameDtoMapper;
 import pl.pacinho.pasjans.model.entity.Game;
+import pl.pacinho.pasjans.model.enums.GameStatus;
 import pl.pacinho.pasjans.repository.GameRepository;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -46,9 +50,13 @@ public class GameService {
     }
 
     public void addCardToGroup(String gameId, CardDto cardDto) {
-       boolean success = gameLogicService.addCardToGroup(gameId, cardDto);
-       if(success)
-        simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
+        boolean success = gameLogicService.addCardToGroup(gameId, cardDto);
+        if (success)
+            simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
+
+        Game game = gameLogicService.findById(gameId);
+        if (gameLogicService.isGameOver(game))
+            game.setStatus(GameStatus.FINISHED);
 
     }
 
@@ -56,5 +64,20 @@ public class GameService {
         Game game = gameLogicService.findById(gameId);
         gameLogicService.moveCards(game, cardMoveDto);
         simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
+
+        if (gameLogicService.isGameOver(game))
+            game.setStatus(GameStatus.FINISHED);
+    }
+
+    public GameSummaryDto getGameSummary(String gameId) {
+        Game game = gameLogicService.findById(gameId);
+
+        if (game.getMoveCount() == 10)
+            return new GameSummaryDto(game.getMoveCount(), ChronoUnit.MILLIS.between(game.getStartTime(), LocalDateTime.now()));
+
+        if (game.getStatus() != GameStatus.FINISHED)
+            return null;
+
+        return new GameSummaryDto(game.getMoveCount(), ChronoUnit.MILLIS.between(game.getStartTime(), LocalDateTime.now()));
     }
 }
