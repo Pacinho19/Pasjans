@@ -51,22 +51,23 @@ public class GameService {
 
     public void addCardToGroup(String gameId, CardDto cardDto) {
         boolean success = gameLogicService.addCardToGroup(gameId, cardDto);
-        if (success)
+        if (success) {
+            Game game = gameLogicService.findById(gameId);
+            if (gameLogicService.isGameOver(game))
+                game.setStatus(GameStatus.FINISHED);
+
             simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
-
-        Game game = gameLogicService.findById(gameId);
-        if (gameLogicService.isGameOver(game))
-            game.setStatus(GameStatus.FINISHED);
-
+        }
     }
 
     public void moveCards(String gameId, CardMoveDto cardMoveDto) {
         Game game = gameLogicService.findById(gameId);
         gameLogicService.moveCards(game, cardMoveDto);
-        simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
 
         if (gameLogicService.isGameOver(game))
             game.setStatus(GameStatus.FINISHED);
+
+        simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
     }
 
     public GameSummaryDto getGameSummary(String gameId) {
