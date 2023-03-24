@@ -14,6 +14,11 @@ public class Stack {
     private int currentIndex = -1;
 
     public int nextIndex() {
+        if (cards.isEmpty()) {
+            currentIndex = -1;
+            return currentIndex;
+        }
+
         if (currentIndex != cards.size() - 1)
             return ++currentIndex;
 
@@ -24,14 +29,21 @@ public class Stack {
     public CardDto getCurrentCard() {
         if (currentIndex == -1)
             return null;
+        if (cards.isEmpty())
+            return null;
         return cards.get(currentIndex);
     }
 
     public int prevIndex() {
+        if (cards.isEmpty()) {
+            currentIndex = -1;
+            return currentIndex;
+        }
+
         if (currentIndex > 0)
             return --currentIndex;
 
-        currentIndex = cards.size()-1;
+        currentIndex = cards.size() - 1;
         return currentIndex;
     }
 }
