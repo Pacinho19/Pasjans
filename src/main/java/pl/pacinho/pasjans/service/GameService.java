@@ -72,9 +72,6 @@ public class GameService {
     public GameSummaryDto getGameSummary(String gameId) {
         Game game = gameLogicService.findById(gameId);
 
-        if (game.getMoveCount() == 10)
-            return new GameSummaryDto(game.getMoveCount(), ChronoUnit.MILLIS.between(game.getStartTime(), LocalDateTime.now()));
-
         if (game.getStatus() != GameStatus.FINISHED)
             return null;
 
