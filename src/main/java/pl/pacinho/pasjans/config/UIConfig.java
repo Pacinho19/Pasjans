@@ -9,6 +9,6 @@ public class UIConfig {
     public static final String GAME_BOARD_RELOAD = GAME_BOARD + "/reload";
     public static final String GAME_STACK = GAME_PAGE + "/stack";
     public static final String GAME_STACK_NEXT_CARD = GAME_STACK + "/next";
-
     public static final String GAME_ADD_CARD_TO_GROUP = GAME_PAGE + "/card/group/add";
+    public static final String GAME_MOVE_CARDS = GAME_PAGE + "/card/move";
 }

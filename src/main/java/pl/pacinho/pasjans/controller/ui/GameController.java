@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pl.pacinho.pasjans.config.UIConfig;
 import pl.pacinho.pasjans.model.dto.CardDto;
+import pl.pacinho.pasjans.model.dto.CardMoveDto;
 import pl.pacinho.pasjans.model.dto.GameDto;
 import pl.pacinho.pasjans.service.GameService;
 
@@ -74,6 +75,12 @@ public class GameController {
     @PostMapping(UIConfig.GAME_ADD_CARD_TO_GROUP)
     public void addCardToGroup(@PathVariable(value = "gameId") String gameId, @RequestBody CardDto cardDto) {
         gameService.addCardToGroup(gameId,cardDto);
+    }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PostMapping(UIConfig.GAME_MOVE_CARDS)
+    public void addCardToGroup(@PathVariable(value = "gameId") String gameId, @RequestBody CardMoveDto cardMoveDto) {
+        gameService.moveCards(gameId,cardMoveDto);
     }
 
 

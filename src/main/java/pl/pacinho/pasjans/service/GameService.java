@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import pl.pacinho.pasjans.model.dto.CardDto;
+import pl.pacinho.pasjans.model.dto.CardMoveDto;
 import pl.pacinho.pasjans.model.dto.GameDto;
 import pl.pacinho.pasjans.model.dto.mapper.GameDtoMapper;
 import pl.pacinho.pasjans.model.entity.Game;
@@ -49,5 +50,11 @@ public class GameService {
        if(success)
         simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
 
+    }
+
+    public void moveCards(String gameId, CardMoveDto cardMoveDto) {
+        Game game = gameLogicService.findById(gameId);
+        gameLogicService.moveCards(game, cardMoveDto);
+        simpMessagingTemplate.convertAndSend("/reload-board/" + gameId, true);
     }
 }

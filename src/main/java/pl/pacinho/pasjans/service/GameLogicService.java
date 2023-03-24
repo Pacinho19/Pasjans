@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.pacinho.pasjans.exception.GameNotFoundException;
 import pl.pacinho.pasjans.model.dto.CardDto;
+import pl.pacinho.pasjans.model.dto.CardMoveDto;
 import pl.pacinho.pasjans.model.dto.ColumnCardDto;
 import pl.pacinho.pasjans.model.entity.CardGroup;
 import pl.pacinho.pasjans.model.entity.Game;
@@ -89,7 +90,7 @@ public class GameLogicService {
     }
 
     private void removeFromColumn(Game game, CardDto cardDto) {
-        Optional<List<ColumnCardDto>> cardColumnForCardOpt = getCardColumnForCard(game, cardDto);
+        Optional<List<ColumnCardDto>> cardColumnForCardOpt = getCardColumnForCard(game, cardDto, false);
         if (cardColumnForCardOpt.isEmpty())
             return;
 
@@ -115,15 +116,20 @@ public class GameLogicService {
 
     }
 
-    private Optional<List<ColumnCardDto>> getCardColumnForCard(Game game, CardDto cardDto) {
+    private Optional<List<ColumnCardDto>> getCardColumnForCard(Game game, CardDto cardDto, boolean checkOnTop) {
         return game.getCardsColumns()
                 .stream()
-                .filter(list -> checkColumnContainsCardOnTop(list, cardDto))
+                .filter(list -> checkOnTop ? checkColumnContainsCardOnTop(list, cardDto) : checkColumnContainsCard(list, cardDto))
                 .findFirst();
     }
 
+    private boolean checkColumnContainsCard(List<ColumnCardDto> list, CardDto cardDto) {
+        return list.stream()
+                .anyMatch(c -> c.getCardDto().equals(cardDto));
+    }
+
     private CardDto getCardFromColumn(Game game, CardDto cardDto) {
-        Optional<List<ColumnCardDto>> cardsColumOpt = getCardColumnForCard(game, cardDto);
+        Optional<List<ColumnCardDto>> cardsColumOpt = getCardColumnForCard(game, cardDto, true);
 
         if (cardsColumOpt.isEmpty())
             return null;
@@ -205,5 +211,90 @@ public class GameLogicService {
                 .filter(c -> c.equals(cardDto))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void moveCards(Game game, CardMoveDto cardMoveDto) {
+        List<ColumnCardDto> targetColumn;
+
+        boolean isKingMoveEmptyField = checkMoveKingInEmptyField(cardMoveDto);
+        if (isKingMoveEmptyField) {
+            targetColumn = getTargetColumnByNumber(game, cardMoveDto.getColumnNumber());
+
+            if (targetColumn == null || !targetColumn.isEmpty())
+                return;
+
+        } else {
+
+            if(cardMoveDto.getSecondCard()==null)
+                return;
+
+            boolean isDifferentColors = checkIsDifferentColors(cardMoveDto);
+            if (!isDifferentColors)
+                return;
+
+            boolean isCardsRankCorrect = checkCardRank(cardMoveDto);
+            if (!isCardsRankCorrect)
+                return;
+
+            Optional<List<ColumnCardDto>> targetColumnOpt = getCardColumnForCard(game, cardMoveDto.getSecondCard(), true);
+            if (targetColumnOpt.isEmpty())
+                return;
+
+            targetColumn = targetColumnOpt.get();
+        }
+
+        List<CardDto> cardsToMove = getAllCardsAbove(game, cardMoveDto.getFirstCard());
+
+        List<ColumnCardDto> finalTargetColumn = targetColumn;
+        cardsToMove.forEach(cardDto -> {
+            removeFromColumn(game, cardDto);
+            finalTargetColumn.add(new ColumnCardDto(true, cardDto));
+        });
+
+    }
+
+    private List<ColumnCardDto> getTargetColumnByNumber(Game game, Integer columnNumber) {
+        if (columnNumber < 1 || columnNumber > game.getCardsColumns().size())
+            return null;
+
+        return game.getCardsColumns().get(columnNumber-1);
+    }
+
+    private boolean checkMoveKingInEmptyField(CardMoveDto cardMoveDto) {
+        return cardMoveDto.getSecondCard() == null
+               && cardMoveDto.getFirstCard().getRank() == CardRank.KING;
+    }
+
+    private List<CardDto> getAllCardsAbove(Game game, CardDto firstCard) {
+        Optional<List<ColumnCardDto>> columnOpt = getCardColumnForCard(game, firstCard, false);
+        if (columnOpt.isEmpty())
+            return Collections.emptyList();
+
+        List<CardDto> out = new ArrayList<>();
+        boolean add = false;
+        for (ColumnCardDto columnCard : columnOpt.get()) {
+            if (columnCard.getCardDto().equals(firstCard)) {
+                add = true;
+            }
+
+            if (add) out.add(columnCard.getCardDto());
+        }
+        return out;
+    }
+
+    private boolean checkCardRank(CardMoveDto cardMoveDto) {
+        CardDto firstCard = cardMoveDto.getFirstCard();
+        CardDto secondCard = cardMoveDto.getSecondCard();
+        return firstCard != null
+               && secondCard != null
+               && secondCard.getRank().getValue() - firstCard.getRank().getValue() == 1;
+    }
+
+    private boolean checkIsDifferentColors(CardMoveDto cardMoveDto) {
+        CardDto firstCard = cardMoveDto.getFirstCard();
+        CardDto secondCard = cardMoveDto.getSecondCard();
+        return firstCard != null
+               && secondCard != null
+               && firstCard.getSuit().getColor() != secondCard.getSuit().getColor();
     }
 }
