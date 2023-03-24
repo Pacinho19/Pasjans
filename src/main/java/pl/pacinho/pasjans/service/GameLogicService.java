@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.pacinho.pasjans.exception.GameNotFoundException;
 import pl.pacinho.pasjans.model.dto.CardDto;
+import pl.pacinho.pasjans.model.dto.ColumnCardDto;
 import pl.pacinho.pasjans.model.entity.CardGroup;
 import pl.pacinho.pasjans.model.entity.Game;
 import pl.pacinho.pasjans.model.enums.CardRank;
@@ -49,10 +50,10 @@ public class GameLogicService {
         int x = 0;
     }
 
-    private List<CardDto> getCardColumn(Stack<CardDto> cards, Integer i) {
+    private List<ColumnCardDto> getCardColumn(Stack<CardDto> cards, Integer i) {
         return IntStream.rangeClosed(1, i)
                 .boxed()
-                .map(j -> cards.pop())
+                .map(j -> new ColumnCardDto(j.equals(i), cards.pop()))
                 .toList();
     }
 

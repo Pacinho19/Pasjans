@@ -3,6 +3,7 @@ package pl.pacinho.pasjans.model.entity;
 import lombok.Getter;
 import lombok.Setter;
 import pl.pacinho.pasjans.model.dto.CardDto;
+import pl.pacinho.pasjans.model.dto.ColumnCardDto;
 import pl.pacinho.pasjans.model.enums.GameStatus;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class Game {
     @Setter
     private Stack stack;
     private LinkedList<CardGroup> cardsGroup;
-    private LinkedList<List<CardDto>> cardsColumns;
+    private LinkedList<List<ColumnCardDto>> cardsColumns;
     private Player player;
     private LocalDateTime startTime;
 
@@ -33,7 +34,7 @@ public class Game {
         this.stack = new Stack();
     }
 
-    public void addCardColumn(List<CardDto> cards){
+    public void addCardColumn(List<ColumnCardDto> cards){
         this.cardsColumns.add(cards);
     }
 
