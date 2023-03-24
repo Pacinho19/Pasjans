@@ -18,7 +18,7 @@ public class CardsColumnsMapper {
 
     private static List<ColumnCardDto> mapToDtos(List<ColumnCardDto> cards) {
         return cards.stream()
-                .map(c -> new ColumnCardDto(c.visible(), c.visible() ? c.cardDto() : null))
+                .map(c -> new ColumnCardDto(c.isVisible(), c.isVisible() ? c.getCardDto() : null))
                 .toList();
     }
 

@@ -12,6 +12,7 @@ import pl.pacinho.pasjans.model.enums.CardSuit;
 import pl.pacinho.pasjans.repository.GameRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
@@ -46,15 +47,13 @@ public class GameLogicService {
 
         game.getStack()
                 .setCards(new LinkedList<>(cards));
-
-        int x = 0;
     }
 
     private List<ColumnCardDto> getCardColumn(Stack<CardDto> cards, Integer i) {
         return IntStream.rangeClosed(1, i)
                 .boxed()
                 .map(j -> new ColumnCardDto(j.equals(i), cards.pop()))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private List<CardDto> mixedCards(List<CardDto> cards_deck) {
@@ -77,7 +76,72 @@ public class GameLogicService {
 
             return addToGroup;
         }
+
+        CardDto cardFromColumn = getCardFromColumn(game, cardDto);
+        if (cardFromColumn != null) {
+            boolean addToGroup = addToGroup(game, cardDto);
+            if (addToGroup)
+                removeFromColumn(game, cardFromColumn);
+
+            return addToGroup;
+        }
         return false;
+    }
+
+    private void removeFromColumn(Game game, CardDto cardDto) {
+        Optional<List<ColumnCardDto>> cardColumnForCardOpt = getCardColumnForCard(game, cardDto);
+        if (cardColumnForCardOpt.isEmpty())
+            return;
+
+        List<ColumnCardDto> cardColumnForCard = cardColumnForCardOpt.get();
+        cardColumnForCard.remove(findColumnCardByCardDto(cardColumnForCard, cardDto));
+
+        setVisibleCardTopOfColumn(cardColumnForCard);
+    }
+
+    private ColumnCardDto findColumnCardByCardDto(List<ColumnCardDto> cardColumnForCard, CardDto cardDto) {
+        return cardColumnForCard.stream()
+                .filter(c -> c.getCardDto().equals(cardDto))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void setVisibleCardTopOfColumn(List<ColumnCardDto> cardColumnForCard) {
+        if (cardColumnForCard.isEmpty())
+            return;
+
+        cardColumnForCard.get(cardColumnForCard.size() - 1)
+                .setVisible(true);
+
+    }
+
+    private Optional<List<ColumnCardDto>> getCardColumnForCard(Game game, CardDto cardDto) {
+        return game.getCardsColumns()
+                .stream()
+                .filter(list -> checkColumnContainsCardOnTop(list, cardDto))
+                .findFirst();
+    }
+
+    private CardDto getCardFromColumn(Game game, CardDto cardDto) {
+        Optional<List<ColumnCardDto>> cardsColumOpt = getCardColumnForCard(game, cardDto);
+
+        if (cardsColumOpt.isEmpty())
+            return null;
+
+        return getCardFromSpecificColumn(cardsColumOpt.get(), cardDto);
+    }
+
+    private CardDto getCardFromSpecificColumn(List<ColumnCardDto> columnCardDtos, CardDto cardDto) {
+        return columnCardDtos.stream()
+                .map(ColumnCardDto::getCardDto)
+                .filter(c -> c != null && c.equals(cardDto))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private boolean checkColumnContainsCardOnTop(List<ColumnCardDto> list, CardDto cardDto) {
+        if (list.isEmpty()) return false;
+        return list.get(list.size() - 1).getCardDto().equals(cardDto);
     }
 
     private boolean addToGroup(Game game, CardDto cardDto) {
