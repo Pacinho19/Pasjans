@@ -225,7 +225,7 @@ public class GameLogicService {
 
         } else {
 
-            if(cardMoveDto.getSecondCard()==null)
+            if (cardMoveDto.getSecondCard() == null)
                 return;
 
             boolean isDifferentColors = checkIsDifferentColors(cardMoveDto);
@@ -247,7 +247,13 @@ public class GameLogicService {
 
         List<ColumnCardDto> finalTargetColumn = targetColumn;
         cardsToMove.forEach(cardDto -> {
-            removeFromColumn(game, cardDto);
+            CardDto cardFromStack = getCardFromStack(game, cardDto);
+            if (cardFromStack != null) {
+                removeFromStack(game, cardFromStack);
+            } else {
+                removeFromColumn(game, cardDto);
+            }
+
             finalTargetColumn.add(new ColumnCardDto(true, cardDto));
         });
 
@@ -257,7 +263,7 @@ public class GameLogicService {
         if (columnNumber < 1 || columnNumber > game.getCardsColumns().size())
             return null;
 
-        return game.getCardsColumns().get(columnNumber-1);
+        return game.getCardsColumns().get(columnNumber - 1);
     }
 
     private boolean checkMoveKingInEmptyField(CardMoveDto cardMoveDto) {
@@ -266,6 +272,9 @@ public class GameLogicService {
     }
 
     private List<CardDto> getAllCardsAbove(Game game, CardDto firstCard) {
+        if (getCardFromStack(game, firstCard) != null)
+            return List.of(firstCard);
+
         Optional<List<ColumnCardDto>> columnOpt = getCardColumnForCard(game, firstCard, false);
         if (columnOpt.isEmpty())
             return Collections.emptyList();
