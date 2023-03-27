@@ -6,7 +6,7 @@
 
     <div th:if="${cardDto!=null}" style="height:100%">
         <div style="width:100%;display:flex">
-            <div style="width:20%;display:inline-block">
+            <div style="width:30%;display:inline-block">
                 <b id="cardRankTop" style="font-size:1.1vw;" th:styleappend="${'color:' + cardDto.suit.color.hex}"
                     th:text="${cardDto.rank.name}">9
                 </b>
